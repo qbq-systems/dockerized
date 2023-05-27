@@ -1,0 +1,8 @@
+server {
+    server_name redmine.local;
+    client_max_body_size 2M;
+
+    location / {
+        proxy_pass http://10.30.10.10:3000;
+    }
+}

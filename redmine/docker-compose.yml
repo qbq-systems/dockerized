@@ -1,0 +1,48 @@
+version: '3.4'
+
+services:
+  redmine:
+    image: redmine:5.0.5-alpine
+    container_name: redmine_app
+    tty: true
+    stdin_open: true
+    restart: always
+    depends_on:
+      - postgres
+    volumes:
+      - ./files:/usr/src/redmine/files
+    environment:
+      REDMINE_DB_POSTGRES: 'postgres'
+      REDMINE_DB_USERNAME: 'redmine'
+      REDMINE_DB_PASSWORD: ${PG_PASSWORD}
+    networks:
+      redmine_network:
+        ipv4_address: 10.30.10.10
+  postgres:
+    image: postgres:15.3-alpine
+    container_name: redmine_postgres
+    tty: true
+    stdin_open: true
+    restart: always
+    volumes:
+      - ./db_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: 'redmine'
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+      POSTGRES_USER: 'redmine'
+    networks:
+      redmine_network:
+        ipv4_address: 10.30.10.11
+
+
+volumes:
+  db_data:
+    driver: local
+  files:
+    driver: local
+
+networks:
+  redmine_network:
+    ipam:
+      config:
+        - subnet: 10.30.10.0/24
