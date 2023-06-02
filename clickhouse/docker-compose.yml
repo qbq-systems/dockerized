@@ -1,0 +1,25 @@
+version: '3.4'
+
+services:
+  clickhouse:
+    image: clickhouse/clickhouse-server:23.4.2.11-alpine
+    tty: true
+    stdin_open: true
+    restart: always
+    volumes:
+      - ./volume/data:/var/lib/clickhouse
+      - ./volume/logs:/var/log/clickhouse-server
+    environment:
+      CLICKHOUSE_DB: ${CLICKHOUSE_DB}
+      CLICKHOUSE_USER: ${CLICKHOUSE_USER}
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD}
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: ${CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT}
+    networks:
+      clickhouse_network:
+        ipv4_address: 10.30.11.10
+
+networks:
+  clickhouse_network:
+    ipam:
+      config:
+        - subnet: 10.30.11.0/24
